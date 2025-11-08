@@ -21,7 +21,7 @@
   "scripts": {
     "start": "react-app-rewired start",
     "build": "npm run tailwind:build && react-app-rewired build",
-    "tailwind:build": "tailwindcss -i ./src/tailwind.css -o ./src/tailwind-output.css --minify",
+    "tailwind:build": "node scripts/build-tailwind.js",
     "tailwind:watch": "tailwindcss -i ./src/tailwind.css -o ./src/tailwind-output.css --watch",
     "firebase:seed": "tsx scripts/initFirestore.js",
     "test": "react-app-rewired test",
