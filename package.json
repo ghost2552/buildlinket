@@ -20,6 +20,7 @@
   },
   "scripts": {
     "start": "react-app-rewired start",
+    "prebuild": "node -e \"const fs=require('fs'),p=require('path');const pub=p.join(process.cwd(),'public');if(!fs.existsSync(pub))fs.mkdirSync(pub,{recursive:true});const idx=p.join(pub,'index.html');if(!fs.existsSync(idx))fs.writeFileSync(idx,'<!DOCTYPE html><html lang=\\\"en\\\"><head><meta charset=\\\"utf-8\\\" /><meta name=\\\"viewport\\\" content=\\\"width=device-width,initial-scale=1\\\" /><link rel=\\\"manifest\\\" href=\\\"%PUBLIC_URL%/manifest.json\\\" /><title>BuildLink</title></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id=\\\"root\\\"></div></body></html>');const mf=p.join(pub,'manifest.json');if(!fs.existsSync(mf))fs.writeFileSync(mf,JSON.stringify({short_name:'BuildLink',name:'BuildLink',icons:[],start_url:'.',display:'standalone'},null,2));\"",
     "build": "npm run tailwind:build && react-app-rewired build",
     "tailwind:build": "sh -c '[ -f ./src/tailwind.css ] && tailwindcss -i ./src/tailwind.css -o ./src/tailwind-output.css --minify || (mkdir -p ./src && echo \"/* Tailwind CSS - placeholder */\" > ./src/tailwind-output.css && echo \"Skipped Tailwind build - tailwind.css not found\")'",
     "tailwind:watch": "tailwindcss -i ./src/tailwind.css -o ./src/tailwind-output.css --watch",
