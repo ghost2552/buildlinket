@@ -1,0 +1,85 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper function to check if user owns the document
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // Users collection - users can read/write their own profile
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && isOwner(userId);
+      allow update, delete: if isOwner(userId);
+    }
+    
+    // Suppliers collection
+    match /suppliers/{supplierId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && isOwner(supplierId);
+      allow update, delete: if isOwner(supplierId);
+    }
+    
+    // Buyers collection
+    match /buyers/{buyerId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && isOwner(buyerId);
+      allow update, delete: if isOwner(buyerId);
+    }
+    
+    // RFQs - readable by all authenticated users, writable by buyers
+    match /rfqs/{rfqId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated() && resource.data.buyerId == request.auth.uid;
+    }
+    
+    // Bids - readable by all authenticated users, writable by suppliers
+    match /bids/{bidId} {
+      allow read: if isAuthenticated();
+      allow create, update: if isAuthenticated();
+      allow delete: if isAuthenticated() && resource.data.supplierId == request.auth.uid;
+    }
+    
+    // Supplier Catalog
+    match /supplierCatalog/{itemId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAuthenticated() && resource.data.supplierId == request.auth.uid;
+    }
+    
+    // Logistics Profiles
+    match /logisticsProfiles/{profileId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAuthenticated() && resource.data.supplierId == request.auth.uid;
+    }
+    
+    // Shipments
+    match /shipments/{shipmentId} {
+      allow read: if isAuthenticated() && 
+        (resource.data.buyerId == request.auth.uid || 
+         resource.data.supplierId == request.auth.uid);
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated() && 
+        (resource.data.buyerId == request.auth.uid || 
+         resource.data.supplierId == request.auth.uid);
+    }
+    
+    // Compliance Reviews - readable by admins, writable by admins
+    match /complianceReviews/{reviewId} {
+      allow read: if isAuthenticated();
+      allow create, update: if isAuthenticated();
+    }
+    
+    // Supplier Inventory
+    match /supplierInventory/{itemId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAuthenticated() && resource.data.supplierId == request.auth.uid;
+    }
+  }
+}
+
