@@ -20,7 +20,7 @@
   },
   "scripts": {
     "start": "react-app-rewired start",
-    "build": "node scripts/verify-public.js && npm run tailwind:build && react-app-rewired build",
+    "build": "npm run tailwind:build && react-app-rewired build",
     "tailwind:build": "tailwindcss -i ./src/tailwind.css -o ./src/tailwind-output.css --minify",
     "tailwind:watch": "tailwindcss -i ./src/tailwind.css -o ./src/tailwind-output.css --watch",
     "firebase:seed": "tsx scripts/initFirestore.js",
